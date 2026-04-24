@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-OCR-Smart-Engine</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f0f23;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: #888;
+            font-size: 0.95rem;
+        }
+
+        .upload-section {
+            background: #1a1a2e;
+            border: 2px dashed #333;
+            border-radius: 16px;
+            padding: 50px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .upload-section:hover,
+        .upload-section.dragover {
+            border-color: #667eea;
+            background: #1e1e3a;
+        }
+
+        .upload-section svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+            color: #667eea;
+        }
+
+        .upload-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .upload-section p {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .controls select,
+        .controls button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .controls select:hover,
+        .controls button:hover {
+            border-color: #667eea;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2) !important;
+            border: none !important;
+            font-weight: 600;
+            min-width: 160px;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-download {
+            background: #1a3a1a !important;
+            border-color: #2a6a2a !important;
+        }
+
+        .btn-download:hover {
+            background: #2a4a2a !important;
+        }
+
+        .file-info {
+            display: none;
+            margin-top: 16px;
+            padding: 12px 20px;
+            background: #16213e;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .file-info.show {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-info .remove-btn {
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 0.85rem;
+            border: none;
+            background: none;
+        }
+
+        .progress-bar {
+            display: none;
+            margin-top: 20px;
+            height: 4px;
+            background: #1a1a2e;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar.show {
+            display: block;
+        }
+
+        .progress-bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 4px;
+            animation: progress 2s ease-in-out infinite;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            50% { width: 80%; }
+            100% { width: 100%; }
+        }
+
+        .status-msg {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 0.9rem;
+            color: #888;
+            display: none;
+        }
+
+        .status-msg.show {
+            display: block;
+        }
+
+        .result-section {
+            display: none;
+            margin-top: 32px;
+        }
+
+        .result-section.show {
+            display: block;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .result-header h2 {
+            font-size: 1.3rem;
+            color: #667eea;
+        }
+
+        .result-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .meta-badge {
+            padding: 4px 12px;
+            background: #16213e;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #8899aa;
+        }
+
+        .meta-badge.engine {
+            background: #1a2a4a;
+            color: #667eea;
+        }
+
+        .meta-badge.handwritten {
+            background: #3a1a2a;
+            color: #ea6688;
+        }
+
+        .result-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .result-stats {
+            font-size: 0.78rem;
+            color: #666;
+            margin-left: auto;
+        }
+
+        .btn-tool {
+            padding: 5px 14px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background: #16213e;
+            color: #aaa;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-tool:hover { border-color: #667eea; color: #e0e0e0; }
+        .btn-tool.active { background: #667eea22; border-color: #667eea; color: #667eea; }
+        .btn-tool.copy-success { border-color: #2ecc71; color: #2ecc71; }
+
+        .view-toggle {
+            display: flex;
+            border: 1px solid #333;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .view-toggle button {
+            padding: 5px 14px;
+            border: none;
+            background: #16213e;
+            color: #888;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .view-toggle button.active {
+            background: #667eea;
+            color: #fff;
+        }
+
+        .result-text {
+            background: #13131f;
+            border: 1px solid #2a2a4e;
+            border-radius: 12px;
+            padding: 28px 32px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.88rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 560px;
+            overflow-y: auto;
+            color: #d8d8e8;
+            letter-spacing: 0.01em;
+        }
+
+        .result-text::-webkit-scrollbar { width: 6px; }
+        .result-text::-webkit-scrollbar-track { background: #13131f; }
+        .result-text::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+        .result-formatted {
+            display: none;
+            background: #13131f;
+            border: 1px solid #2a2a4e;
+            border-radius: 12px;
+            padding: 28px 32px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.92rem;
+            line-height: 1.85;
+            max-height: 560px;
+            overflow-y: auto;
+            color: #d8d8e8;
+        }
+
+        .result-formatted::-webkit-scrollbar { width: 6px; }
+        .result-formatted::-webkit-scrollbar-track { background: #13131f; }
+        .result-formatted::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+        .result-formatted .page-sep {
+            color: #667eea;
+            font-weight: 600;
+            border-bottom: 1px solid #2a2a4e;
+            padding-bottom: 6px;
+            margin: 18px 0 10px;
+        }
+
+        .result-formatted ol, .result-formatted ul {
+            margin: 6px 0 6px 20px;
+        }
+
+        .result-formatted li {
+            margin-bottom: 4px;
+        }
+
+        .result-formatted p {
+            margin: 4px 0;
+        }
+
+        .btn-refine {
+            background: #1a2a3a !important;
+            border-color: #2a4a6a !important;
+            color: #66aadd !important;
+        }
+
+        .btn-refine:hover {
+            background: #1e3448 !important;
+        }
+
+        .llm-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.83rem;
+            color: #888;
+            cursor: pointer;
+            user-select: none;
+            padding: 5px 10px;
+            border: 1px solid #2a3a4a;
+            border-radius: 6px;
+            background: #0f1a24;
+            transition: all 0.15s ease;
+        }
+
+        .llm-label:hover { border-color: #66aadd; color: #aad; }
+        .llm-label input[type="checkbox"] { accent-color: #667eea; cursor: pointer; }
+
+        .result-formatted ol {
+            counter-reset: item;
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .result-formatted ol li {
+            counter-increment: item;
+            padding: 4px 0 4px 32px;
+            position: relative;
+            border-left: 2px solid #2a3a5e;
+            margin-bottom: 6px;
+        }
+
+        .result-formatted ol li::before {
+            content: counter(item) ".";
+            position: absolute;
+            left: 6px;
+            color: #667eea;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .result-confidence {
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.87rem;
+            line-height: 2.0;
+            padding: 12px 0;
+            max-height: 560px;
+            overflow-y: auto;
+        }
+
+        .conf-line {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            padding: 3px 16px;
+            border-radius: 4px;
+            margin-bottom: 2px;
+            border-left: 3px solid transparent;
+        }
+
+        .conf-line .conf-text { flex: 1; }
+        .conf-line .conf-badge {
+            font-size: 0.68rem;
+            opacity: 0.55;
+            margin-left: 12px;
+            white-space: nowrap;
+        }
+
+        .conf-high  { border-left-color: #27ae60; color: #a8d8a8; }
+        .conf-mid   { border-left-color: #f39c12; color: #d4b87a; }
+        .conf-low   { border-left-color: #e74c3c; color: #e08080; }
+        .conf-none  { border-left-color: #444;    color: #888;    }
+
+        .conf-legend {
+            display: flex;
+            gap: 14px;
+            padding: 8px 16px 10px;
+            font-size: 0.72rem;
+            color: #666;
+            border-bottom: 1px solid #1a2a3a;
+            margin-bottom: 4px;
+        }
+
+        .error-msg {
+            display: none;
+            margin-top: 16px;
+            padding: 16px;
+            background: #2a1a1a;
+            border: 1px solid #4a2a2a;
+            border-radius: 8px;
+            color: #e74c3c;
+            font-size: 0.9rem;
+        }
+
+        .error-msg.show {
+            display: block;
+        }
+
+        .preview-section {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .preview-section.show {
+            display: block;
+        }
+
+        .preview-section img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            color: #444;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 20px 12px; }
+            header h1 { font-size: 1.6rem; }
+            .upload-section { padding: 30px 16px; }
+            .controls { flex-direction: column; }
+            .controls select, .controls button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI-OCR-Smart-Engine</h1>
+            <p>PaddleOCR + TrOCR + Tesseract | Handwritten &amp; Printed Text | Multilingual</p>
+        </header>
+
+        <div class="upload-section" id="upload-area">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+            </svg>
+            <h3>Upload Image or PDF</h3>
+            <p>Drag & drop or click to select | PNG, JPEG, BMP, TIFF, WebP, PDF</p>
+            <input type="file" id="file-input" accept="image/*,.pdf">
+        </div>
+
+        <div class="file-info" id="file-info">
+            <span id="file-name"></span>
+            <button class="remove-btn" onclick="removeFile()">Remove</button>
+        </div>
+
+        <div class="preview-section" id="preview-section">
+            <img id="preview-img" alt="Preview">
+        </div>
+
+        <div class="controls">
+            <select id="engine-select">
+                <option value="smart">Smart Routing (Auto)</option>
+                <option value="paddle">PaddleOCR Only</option>
+                <option value="trocr">TrOCR Only (Handwritten)</option>
+                <option value="tesseract">Tesseract Only (Printed)</option>
+            </select>
+            <label class="llm-label" title="Requires Ollama running locally (llama3 / mistral)">
+                <input type="checkbox" id="use-llm-check">
+                AI Correct
+            </label>
+            <label class="llm-label" title="Word-level + TextBlob spell correction (offline, fast)">
+                <input type="checkbox" id="use-sc-check">
+                Spellcheck
+            </label>
+            <button class="btn-primary" id="ocr-btn" onclick="runOCR()" disabled>Extract Text</button>
+            <button class="btn-download controls-btn" id="download-btn" onclick="downloadText()" style="display:none;">
+                Download .txt
+            </button>
+            <button class="btn-download controls-btn" id="json-btn" onclick="exportJSON()" style="display:none;">
+                Export JSON
+            </button>
+        </div>
+
+        <div class="progress-bar" id="progress-bar">
+            <div class="fill"></div>
+        </div>
+
+        <div class="status-msg" id="status-msg"></div>
+        <div class="error-msg" id="error-msg"></div>
+
+        <div class="result-section" id="result-section">
+            <div class="result-header">
+                <h2>Extracted Text</h2>
+            </div>
+            <div class="result-meta" id="result-meta"></div>
+
+            <div class="result-toolbar">
+                <div class="view-toggle">
+                    <button id="btn-view-formatted" class="active" onclick="setView('formatted')">Formatted</button>
+                    <button id="btn-view-raw" onclick="setView('raw')">Raw</button>
+                    <button id="btn-view-ai"   onclick="setView('ai')"   style="display:none;">AI</button>
+                    <button id="btn-view-conf" onclick="setView('conf')" style="display:none;">Conf</button>
+                    <button id="btn-view-sc"   onclick="setView('sc')"   style="display:none;">SC</button>
+                </div>
+                <button class="btn-tool" id="btn-copy" onclick="copyText()">Copy</button>
+                <button class="btn-tool btn-refine" id="btn-refine" onclick="refineText()">AI Refine</button>
+                <span class="result-stats" id="result-stats"></span>
+            </div>
+
+            <div class="result-formatted"   id="result-formatted"></div>
+            <div class="result-text"        id="result-text"        style="display:none;"></div>
+            <div class="result-confidence"  id="result-confidence"  style="display:none;"></div>
+            <div class="result-formatted"   id="result-sc"          style="display:none;"></div>
+        </div>
+
+        <footer>
+            <p>AI-OCR-Smart-Engine v1.0 | PaddleOCR + TrOCR + Tesseract</p>
+        </footer>
+    </div>
+
+    <script>
+        let selectedFile = null;
+        let extractedText = '';
+        let formattedText = '';
+        let llmText       = '';
+        let scText        = '';
+        let confDetails   = [];
+        let currentView   = 'formatted';
+        let lastResultData = null;
+
+        // ── Drag & drop ──────────────────────────────────────────────────────
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput  = document.getElementById('file-input');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+        uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+        });
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) handleFile(e.target.files[0]);
+        });
+
+        function handleFile(file) {
+            selectedFile = file;
+            document.getElementById('file-name').textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+            document.getElementById('file-info').classList.add('show');
+            document.getElementById('ocr-btn').disabled = false;
+            hideError();
+
+            const previewSection = document.getElementById('preview-section');
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('preview-img').src = e.target.result;
+                    previewSection.classList.add('show');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewSection.classList.remove('show');
+            }
+        }
+
+        function removeFile() {
+            selectedFile = null;
+            fileInput.value = '';
+            document.getElementById('file-info').classList.remove('show');
+            document.getElementById('preview-section').classList.remove('show');
+            document.getElementById('ocr-btn').disabled = true;
+            document.getElementById('result-section').classList.remove('show');
+            document.getElementById('download-btn').style.display = 'none';
+            hideError();
+        }
+
+        // ── OCR request ──────────────────────────────────────────────────────
+        async function runOCR() {
+            if (!selectedFile) return;
+
+            const btn        = document.getElementById('ocr-btn');
+            const progressBar = document.getElementById('progress-bar');
+            const statusMsg  = document.getElementById('status-msg');
+            const engine = document.getElementById('engine-select').value;
+            const useLLM = document.getElementById('use-llm-check').checked;
+            const useSC  = document.getElementById('use-sc-check').checked;
+
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
+            progressBar.classList.add('show');
+            const isHandwritten = document.getElementById('engine-select').value === 'trocr';
+            let statusHint = 'Uploading and processing…';
+            if (useLLM && useSC)  statusHint = 'Processing with TrOCR + Spellcheck + AI correction… (may take 60–90 s)';
+            else if (useLLM)      statusHint = 'Processing with AI correction… (may take 30–60 s)';
+            else if (useSC)       statusHint = 'Processing with spellcheck… (may take 10–20 s)';
+            else                  statusHint = 'Processing… (handwritten images may take 20–40 s)';
+            statusMsg.textContent = statusHint;
+            statusMsg.classList.add('show');
+            hideError();
+            document.getElementById('result-section').classList.remove('show');
+            document.getElementById('download-btn').style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            try {
+                const url = `/ocr?engine=${engine}&smart_routing=${engine === 'smart'}&use_llm=${useLLM}&use_spellcheck=${useSC}`;
+                const response = await fetch(url, { method: 'POST', body: formData });
+
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.detail || `Server error: ${response.status}`);
+                }
+
+                displayResult(await response.json());
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Extract Text';
+                progressBar.classList.remove('show');
+                statusMsg.classList.remove('show');
+            }
+        }
+
+        // ── Display result ───────────────────────────────────────────────────
+        function displayResult(data) {
+            const result = data.result || {};
+            extractedText = result.text           || 'No text detected.';
+            formattedText = result.formatted_text  || extractedText;
+            llmText       = result.llm_text        || '';
+
+            // Raw view
+            document.getElementById('result-text').textContent = extractedText;
+
+            // Formatted view (default)
+            document.getElementById('result-formatted').innerHTML = renderFormatted(formattedText);
+
+            // Show / hide AI view button
+            const btnAI = document.getElementById('btn-view-ai');
+            if (llmText && llmText !== formattedText) {
+                btnAI.style.display = 'block';
+                btnAI.title = `AI corrected via ${result.llm_method || 'ollama'}`;
+            } else {
+                btnAI.style.display = 'none';
+            }
+
+            // Confidence view
+            confDetails = (result.details || []).filter(d => d.confidence !== undefined);
+            const btnConf = document.getElementById('btn-view-conf');
+            btnConf.style.display = confDetails.length ? 'block' : 'none';
+
+            // Spellcheck view
+            scText = result.spellchecked_text || '';
+            const btnSC = document.getElementById('btn-view-sc');
+            btnSC.style.display = scText ? 'block' : 'none';
+
+            // Store full result for JSON export
+            lastResultData = { data, result };
+
+            // Stats
+            const wordCount = extractedText.trim().split(/\s+/).filter(Boolean).length;
+            document.getElementById('result-stats').textContent =
+                `${wordCount} words · ${extractedText.length} chars`
+                + (llmText ? ' · AI ready' : '');
+
+            // Meta badges
+            let metaHTML = `<span class="meta-badge">${(data.file_type || 'image').toUpperCase()}</span>`;
+            if (data.pages) metaHTML += `<span class="meta-badge">${data.pages} page(s)</span>`;
+            (result.engines_used || [result.engine || 'PaddleOCR']).forEach(eng => {
+                metaHTML += `<span class="meta-badge engine">${eng}</span>`;
+            });
+            if (result.handwritten_detected)
+                metaHTML += `<span class="meta-badge handwritten">Handwritten Detected</span>`;
+            if (result.llm_method && result.llm_method !== 'none')
+                metaHTML += `<span class="meta-badge" style="background:#1a2a3a;color:#66aadd;">LLM: ${result.llm_method}</span>`;
+
+            document.getElementById('result-meta').innerHTML = metaHTML;
+            document.getElementById('result-section').classList.add('show');
+            document.getElementById('download-btn').style.display = 'inline-block';
+            document.getElementById('json-btn').style.display = 'inline-block';
+
+            setView('formatted');
+        }
+
+        // ── Formatted HTML renderer ──────────────────────────────────────────
+        function renderFormatted(text) {
+            const lines = text.split('\n');
+            let html = '';
+            let inOl = false, inUl = false;
+
+            const closeList = () => {
+                if (inOl) { html += '</ol>'; inOl = false; }
+                if (inUl) { html += '</ul>'; inUl = false; }
+            };
+
+            lines.forEach(line => {
+                const trimmed = line.trim();
+
+                // Page separator
+                if (/^---\s+Page\s+\d+/.test(trimmed)) {
+                    closeList();
+                    html += `<div class="page-sep">${escHtml(trimmed)}</div>`;
+                    return;
+                }
+
+                // Numbered list item  "1. text"
+                const numMatch = trimmed.match(/^(\d+)\.\s+(.+)$/);
+                if (numMatch) {
+                    if (inUl) { html += '</ul>'; inUl = false; }
+                    if (!inOl) { html += '<ol>'; inOl = true; }
+                    html += `<li>${escHtml(numMatch[2])}</li>`;
+                    return;
+                }
+
+                // Bullet item  "  • text"
+                const bulletMatch = trimmed.match(/^[•\-\*]\s+(.+)$/);
+                if (bulletMatch) {
+                    if (inOl) { html += '</ol>'; inOl = false; }
+                    if (!inUl) { html += '<ul>'; inUl = true; }
+                    html += `<li>${escHtml(bulletMatch[1])}</li>`;
+                    return;
+                }
+
+                closeList();
+
+                if (trimmed === '') {
+                    html += '<br>';
+                } else {
+                    html += `<p>${escHtml(trimmed)}</p>`;
+                }
+            });
+
+            closeList();
+            return html;
+        }
+
+        function escHtml(s) {
+            return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
+
+        // ── Confidence view renderer ─────────────────────────────────────────
+        function renderConfidenceView(details) {
+            if (!details || !details.length)
+                return '<p style="color:#666;padding:20px">No confidence data available.</p>';
+
+            const legend = `<div class="conf-legend">
+                <span><span style="color:#27ae60">&#9646;</span> High (&ge;75%)</span>
+                <span><span style="color:#f39c12">&#9646;</span> Medium (50&ndash;75%)</span>
+                <span><span style="color:#e74c3c">&#9646;</span> Low (&lt;50%)</span>
+                <span><span style="color:#444">&#9646;</span> TrOCR</span>
+            </div>`;
+
+            const lines = details.map(d => {
+                const conf   = d.confidence || 0;
+                const engine = d.engine || 'PaddleOCR';
+                const isTrocr = engine.includes('TrOCR');
+
+                let cls;
+                if (isTrocr || conf === 0) cls = 'conf-none';
+                else if (conf >= 0.75)     cls = 'conf-high';
+                else if (conf >= 0.50)     cls = 'conf-mid';
+                else                       cls = 'conf-low';
+
+                const pct   = conf > 0 ? `${(conf * 100).toFixed(0)}%` : '';
+                const badge = `${pct} [${engine}]`.trim();
+
+                return `<div class="conf-line ${cls}">`
+                     + `<span class="conf-text">${escHtml(d.text)}</span>`
+                     + `<span class="conf-badge">${escHtml(badge)}</span>`
+                     + `</div>`;
+            });
+
+            return legend + lines.join('');
+        }
+
+        // ── View toggle ──────────────────────────────────────────────────────
+        function setView(view) {
+            currentView = view;
+            const raw  = document.getElementById('result-text');
+            const fmt  = document.getElementById('result-formatted');
+            const conf = document.getElementById('result-confidence');
+            const sc   = document.getElementById('result-sc');
+            const btnF = document.getElementById('btn-view-formatted');
+            const btnR = document.getElementById('btn-view-raw');
+            const btnA = document.getElementById('btn-view-ai');
+            const btnC = document.getElementById('btn-view-conf');
+            const btnS = document.getElementById('btn-view-sc');
+
+            // Hide all panels
+            [raw, fmt, conf, sc].forEach(el => el && (el.style.display = 'none'));
+            [btnF, btnR, btnA, btnC, btnS].forEach(b => b && b.classList.remove('active'));
+
+            if (view === 'raw') {
+                raw.style.display = 'block';
+                btnR.classList.add('active');
+            } else if (view === 'ai') {
+                fmt.style.display = 'block';
+                fmt.innerHTML = renderFormatted(llmText || formattedText);
+                if (btnA) btnA.classList.add('active');
+            } else if (view === 'conf') {
+                conf.style.display = 'block';
+                conf.innerHTML = renderConfidenceView(confDetails);
+                if (btnC) btnC.classList.add('active');
+            } else if (view === 'sc') {
+                sc.style.display = 'block';
+                sc.innerHTML = renderFormatted(scText || formattedText);
+                if (btnS) btnS.classList.add('active');
+            } else {
+                fmt.style.display = 'block';
+                fmt.innerHTML = renderFormatted(formattedText);
+                btnF.classList.add('active');
+            }
+        }
+
+        // ── Copy button ──────────────────────────────────────────────────────
+        async function copyText() {
+            const text = currentView === 'ai'   ? (llmText || formattedText)
+                       : currentView === 'sc'   ? (scText  || formattedText)
+                       : currentView === 'raw'  ? extractedText
+                       : formattedText;
+            if (!text) return;
+            try {
+                await navigator.clipboard.writeText(text);
+                const btn = document.getElementById('btn-copy');
+                btn.textContent = 'Copied!';
+                btn.classList.add('copy-success');
+                setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copy-success'); }, 1800);
+            } catch {
+                prompt('Copy this text:', text);
+            }
+        }
+
+        // ── AI Refine button ─────────────────────────────────────────────────
+        async function refineText() {
+            if (!extractedText.trim()) return;
+            const btn = document.getElementById('btn-refine');
+            btn.textContent = 'Refining…';
+            btn.disabled = true;
+
+            try {
+                const resp = await fetch('/ocr/refine', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: formattedText || extractedText }),
+                });
+                if (!resp.ok) throw new Error('Refine request failed');
+                const data = await resp.json();
+                llmText = data.refined_text || formattedText;
+
+                const btnAI = document.getElementById('btn-view-ai');
+                btnAI.style.display = 'block';
+                btnAI.title = `AI corrected via ${data.method}`;
+
+                const wordCount = llmText.trim().split(/\s+/).filter(Boolean).length;
+                document.getElementById('result-stats').textContent =
+                    `${wordCount} words · ${llmText.length} chars · (${data.method})`;
+                setView('ai');
+            } catch (e) {
+                showError('Refine failed: ' + e.message);
+            } finally {
+                btn.textContent = 'AI Refine';
+                btn.disabled = false;
+            }
+        }
+
+        // ── Download ─────────────────────────────────────────────────────────
+        function downloadText() {
+            const text = currentView === 'ai'  ? (llmText || formattedText)
+                       : currentView === 'sc'  ? (scText  || formattedText)
+                       : currentView === 'raw' ? extractedText
+                       : formattedText;
+            if (!text) return;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            a.href = url; a.download = 'ocr_output.txt';
+            document.body.appendChild(a); a.click();
+            document.body.removeChild(a); URL.revokeObjectURL(url);
+        }
+
+        // ── JSON export ──────────────────────────────────────────────────
+        function exportJSON() {
+            if (!lastResultData) return;
+            const { data, result } = lastResultData;
+            const payload = {
+                exported_at: new Date().toISOString(),
+                file_type:   data.file_type || 'image',
+                pages:       data.pages || 1,
+                metadata: {
+                    engines_used:        result.engines_used || [result.engine || 'PaddleOCR'],
+                    handwritten_detected: result.handwritten_detected || false,
+                    llm_method:          result.llm_method  || 'none',
+                },
+                text: {
+                    raw:          extractedText,
+                    formatted:    formattedText,
+                    spellchecked: scText   || null,
+                    ai_corrected: llmText  || null,
+                },
+                lines: (result.details || []).map(d => ({
+                    text:             d.text,
+                    confidence:       d.confidence   !== undefined ? d.confidence : null,
+                    engine:           d.engine        || 'PaddleOCR',
+                    paddle_confidence:d.paddle_confidence || null,
+                })),
+            };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            a.href = url; a.download = 'ocr_result.json';
+            document.body.appendChild(a); a.click();
+            document.body.removeChild(a); URL.revokeObjectURL(url);
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('error-msg');
+            el.textContent = msg; el.classList.add('show');
+        }
+
+        function hideError() {
+            document.getElementById('error-msg').classList.remove('show');
+        }
+    </script>
+</body>
+</html>
