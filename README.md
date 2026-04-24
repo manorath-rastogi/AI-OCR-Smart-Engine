@@ -300,8 +300,6 @@ ocr-document-comparator/
 
 **Manorath Rastogi**
 
-- GitHub: [https://github.com/your-username](https://github.com/your-username)
-- LinkedIn: *(add your link)*
 
 ---
 
