@@ -1,29 +1,15 @@
-# FastAPI & Server
-fastapi>=0.115.0
-uvicorn[standard]>=0.30.0
-python-multipart>=0.0.9
-
-# OCR Engines
-paddlepaddle>=2.6.2
-paddleocr>=2.8.1
-pytesseract>=0.3.13
-transformers>=4.44.0
-torch>=2.4.0
-torchvision>=0.19.0
-
-# Image Processing
-opencv-python-headless>=4.10.0
-Pillow>=10.4.0
-numpy>=1.26.0
-
-# PDF Support
-pdf2image>=1.17.0
-pymupdf>=1.23.0
-
-# Utilities
-python-magic>=0.4.27
-httpx>=0.27.0
-
-# Optional spell-correction (word-level + TextBlob fallback)
-textblob>=0.18.0
-pyspellchecker>=0.7.2
+fastapi==0.110.0
+uvicorn==0.29.0
+opencv-python==4.9.0.80
+numpy==1.26.4
+pandas==2.2.1
+torch==2.2.2
+torchvision==0.17.2
+tensorflow==2.15.0
+transformers==4.39.3
+librosa==0.10.1
+vosk==0.3.45
+fer==22.5.1
+scikit-learn==1.4.1
+pydantic==2.6.4
+python-multipart==0.0.9

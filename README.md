@@ -1,306 +1,260 @@
-# 🧠 AI-OCR-Smart-Engine
+# Emotion AI - AI-Powered Emotion Detection System
 
-> Production-level OCR system that extracts text from PDFs, images, and handwritten documents — with smart routing, spellcheck, and optional LLM correction.
-
-Built with **FastAPI · PaddleOCR · TrOCR · Tesseract · Ollama**
+A production-ready, modular backend system for emotion detection using AI. Supports image-based facial emotion recognition, multilingual voice-based emotion analysis, and contextual motivational quote generation.
 
 ---
 
-## 🔥 Features
+## Features
 
-| Feature | Details |
-|---|---|
-| 🖼️ **Image → Text (Printed)** | PaddleOCR with CLAHE + deskew preprocessing |
-| ✍️ **Handwritten Text** | Microsoft TrOCR (large model, beam search) |
-| 📄 **PDF → Text** | Poppler page rendering + per-page OCR |
-| 🔀 **Smart Routing Engine** | Auto-detects handwriting vs print; routes to best engine |
-| 📊 **Line-level Confidence** | Per-line confidence scores; only low-conf lines sent to TrOCR |
-| 🔤 **Spellcheck (Offline)** | `pyspellchecker` + TextBlob — no internet needed |
-| 🤖 **AI Correction (Optional)** | Local Ollama LLM (llama3 → mistral fallback) with hallucination guard |
-| 📐 **Structure Reconstruction** | Numbered lists, reading order, merged word fixes |
-| 🎨 **Clean Web UI** | Upload · Preview · Extract · Copy · Download · Multi-view |
-| 📤 **Export** | `.txt` (view-aware) · Structured JSON (with confidence + engine info) |
-| 🐳 **Docker Support** | One-command deploy |
+### 1. Image-Based Emotion Detection
+- Face detection using MTCNN (via FER library)
+- CNN-based emotion classification: Happy, Sad, Angry, Surprise, Neutral, Fear, Disgust
+- Returns confidence scores for all emotions
+- Multi-face detection support
 
----
+### 2. Voice-Based Emotion Detection (Multilingual)
+- Offline speech recognition using Vosk
+- Supported languages: **English, Hindi, Marathi, Tamil, Telugu**
+- Sentiment analysis using `nlptown/bert-base-multilingual-uncased-sentiment`
+- Maps sentiment polarity to emotion labels
 
-## 🧠 Smart Routing Logic
-
-```
-Input Image
-    │
-    ▼
-PaddleOCR (detection + recognition)
-    │
-    ├─ Handwriting detected OR avg_confidence < 0.5
-    │       └──► Full TrOCR (all lines)
-    │
-    ├─ 0.5 ≤ avg_confidence < 0.7
-    │       └──► Line-level TrOCR (only weak lines re-processed)
-    │
-    └─ avg_confidence ≥ 0.7
-            └──► PaddleOCR result (fast path)
-    │
-    ▼
-Post-processing Pipeline
-    (list fix → word corrections → acronym norm → spellcheck → structure)
-    │
-    ▼
-Optional: LLM Correction (Ollama)  ← similarity guard (≥ 40% or fallback)
-    │
-    ▼
-Output (Raw · Formatted · Spellchecked · AI · Confidence View)
-```
+### 3. Quote Generation
+- Generates motivational quotes using HuggingFace `distilgpt2`
+- Emotion-specific prompt engineering
+- Fallback to curated quotes for quality assurance
+- Clean output with incomplete sentence filtering
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| **Backend** | FastAPI + Uvicorn |
-| **OCR — Printed** | PaddleOCR ≥ 2.8 |
-| **OCR — Handwritten** | Microsoft TrOCR (`trocr-large-handwritten`) |
-| **OCR — Fallback** | Tesseract ≥ 5 |
-| **ML Runtime** | PyTorch + HuggingFace Transformers |
-| **Image Processing** | OpenCV, Pillow, NumPy |
-| **PDF Processing** | pdf2image + Poppler |
-| **Spellcheck** | pyspellchecker + TextBlob |
-| **AI Correction** | Ollama (local LLM — llama3 / mistral) |
-| **Frontend** | HTML + CSS + Vanilla JS |
+| Component | Technology |
+|-----------|-----------|
+| Backend | FastAPI (Python) |
+| Image Emotion | FER (OpenCV + MTCNN + CNN) |
+| Voice Recognition | Vosk (offline) |
+| NLP Sentiment | `nlptown/bert-base-multilingual-uncased-sentiment` |
+| Text Generation | `distilgpt2` (HuggingFace Transformers) |
+| Frontend | Vanilla HTML/CSS/JS |
 
 ---
 
-## 📦 Local Setup (Windows)
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/your-username/ocr-document-comparator.git
-cd ocr-document-comparator
-```
-
-### 2. Create & activate a virtual environment
-
-```bash
-python -m venv venv
-venv\Scripts\activate
-```
-
-### 3. Install Python dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-> ⚠️ **PaddleOCR first-run** will download model weights (~300 MB).  
-> ⚠️ **TrOCR first-run** will download `trocr-large-handwritten` (~1.3 GB).
-
-### 4. Install Poppler (Required for PDF support)
-
-1. Download the latest release from:  
-   👉 https://github.com/oschwartz10612/poppler-windows/releases
-2. Extract and add the `bin/` folder to your **system PATH**
-3. Verify: `pdftoppm -v`
-
-### 5. Install Tesseract (Required for fallback engine)
-
-1. Download installer from:  
-   👉 https://github.com/UB-Mannheim/tesseract/wiki
-2. Add Tesseract to **system PATH**
-3. Verify: `tesseract --version`
-
-### 6. Run the server
-
-```bash
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-Open 👉 **http://127.0.0.1:8000**
-
----
-
-## 📦 Local Setup (Linux / macOS)
-
-```bash
-# System dependencies
-sudo apt-get update && sudo apt-get install -y \
-    tesseract-ocr poppler-utils libmagic1 libgl1-mesa-glx
-
-# Python setup
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-
-# Run
-uvicorn main:app --host 0.0.0.0 --port 8000
-```
-
----
-
-## 🐳 Docker
-
-```bash
-docker build -t ai-ocr-smart-engine .
-docker run -p 8000:8000 ai-ocr-smart-engine
-```
-
----
-
-## 🤖 Optional: AI Correction via Ollama
-
-```bash
-# 1. Install Ollama
-# https://ollama.ai
-
-# 2. Pull a model (choose one)
-ollama pull llama3       # recommended (~4 GB)
-ollama pull mistral      # lighter alternative (~4 GB)
-
-# 3. Ollama runs at http://localhost:11434 — no extra config needed
-```
-
-In the UI, check **"AI Correct"** before clicking Extract Text.
-
-**Safety guard built-in:** If the LLM output deviates more than 60% from the input (hallucination detected), the system automatically falls back to the original OCR text.
-
----
-
-## ⚙️ API Reference
-
-### `POST /ocr`
-
-| Parameter | Type | Default | Description |
-|---|---|---|---|
-| `file` | File | required | Image (PNG/JPG/BMP/TIFF/WebP) or PDF |
-| `engine` | string | `smart` | `smart` · `paddle` · `trocr` · `tesseract` |
-| `smart_routing` | bool | `true` | Enable smart engine routing |
-| `use_llm` | bool | `false` | Run Ollama LLM correction |
-| `use_spellcheck` | bool | `false` | Run offline spell correction |
-
-**Example (Python):**
-
-```python
-import requests
-
-with open("document.jpg", "rb") as f:
-    r = requests.post(
-        "http://127.0.0.1:8000/ocr",
-        files={"file": f},
-        params={"engine": "smart", "use_spellcheck": True}
-    )
-
-print(r.json())
-```
-
-**Example (curl):**
-
-```bash
-curl -X POST "http://127.0.0.1:8000/ocr?engine=smart&use_spellcheck=true" \
-     -F "file=@document.png"
-```
-
-### `POST /ocr/refine`
-
-Re-run AI correction on already-extracted text.
-
-```bash
-curl -X POST "http://127.0.0.1:8000/ocr/refine" \
-     -H "Content-Type: application/json" \
-     -d '{"text": "Ths is a tset sentance"}'
-```
-
-### `GET /health`
-
-Returns server status and loaded engine info.
-
----
-
-## 📊 Response Format
-
-```json
-{
-  "success": true,
-  "file_type": "image",
-  "pages": 1,
-  "result": {
-    "text": "raw OCR output...",
-    "formatted_text": "cleaned + structured output...",
-    "spellchecked_text": "spell-corrected output...",
-    "llm_text": "AI-corrected output (if enabled)...",
-    "llm_method": "ollama/llama3",
-    "engines_used": ["PaddleOCR", "TrOCR"],
-    "handwritten_detected": false,
-    "details": [
-      {
-        "text": "line of text",
-        "confidence": 0.93,
-        "engine": "PaddleOCR",
-        "bbox": [[x1,y1],[x2,y2],[x3,y3],[x4,y4]]
-      }
-    ]
-  }
-}
-```
-
----
-
-## 🗂️ Project Structure
+## Project Structure
 
 ```
-ocr-document-comparator/
-├── main.py              # FastAPI server + API endpoints
-├── ocr_engine.py        # OCR engines, smart routing, reading-order sort
-├── preprocessing.py     # Image preprocessing (deskew, CLAHE, upscale, sharpen)
-├── postprocessing.py    # Text cleanup, list fix, acronym norm, spellcheck
-├── llm.py               # Ollama LLM correction with similarity guard
+├── backend/
+│   ├── main.py                    # FastAPI application entry point
+│   ├── routes/
+│   │   ├── image.py               # /predict-image endpoint
+│   │   ├── voice.py               # /predict-voice endpoint
+│   │   └── quote.py               # /generate-quote endpoint
+│   ├── services/
+│   │   ├── image_emotion.py       # Image emotion detection logic
+│   │   ├── voice_emotion.py       # Voice emotion detection logic
+│   │   └── quote_generator.py     # Quote generation logic
+│   ├── utils/
+│   │   └── preprocessing.py       # Image/audio preprocessing utilities
+│   └── models/
+│       └── vosk_model/            # Vosk language models (download separately)
 ├── frontend/
-│   └── index.html       # Full web UI (multi-view, export, confidence highlight)
-├── requirements.txt     # Python dependencies
-├── Dockerfile           # Docker support
+│   └── index.html                 # Testing UI
+├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## 🖥️ UI Views
+## Setup Instructions
 
-| Button | Shows |
-|---|---|
-| **Formatted** | Cleaned, structured text (default) |
-| **Raw** | Direct OCR output, no corrections |
-| **SC** | Spellcheck-corrected text (when enabled) |
-| **AI** | LLM-corrected text (when enabled) |
-| **Conf** | Per-line confidence heat-map (🟢 high · 🟡 medium · 🔴 low) |
+### Prerequisites
+- Python 3.10+
+- Minimum 8GB RAM
+- GPU optional but recommended
+
+### 1. Clone the Repository
+```bash
+git clone <repo-url>
+cd emotion-ai
+```
+
+### 2. Create Virtual Environment (Recommended)
+```bash
+python -m venv venv
+source venv/bin/activate      # Linux/Mac
+# venv\Scripts\activate       # Windows
+```
+
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Download Vosk Models
+
+Download the required Vosk models from [https://alphacephei.com/vosk/models](https://alphacephei.com/vosk/models):
+
+**Recommended models:**
+- `vosk-model-small-en-us-0.15` (English)
+- `vosk-model-small-hi-0.22` (Hindi)
+
+```bash
+# Create model directory
+mkdir -p backend/models/vosk_model
+
+# Download and extract English model
+wget https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
+unzip vosk-model-small-en-us-0.15.zip -d backend/models/vosk_model/
+mv backend/models/vosk_model/vosk-model-small-en-us-0.15 backend/models/vosk_model/en
+
+# Download and extract Hindi model
+wget https://alphacephei.com/vosk/models/vosk-model-small-hi-0.22.zip
+unzip vosk-model-small-hi-0.22.zip -d backend/models/vosk_model/
+mv backend/models/vosk_model/vosk-model-small-hi-0.22 backend/models/vosk_model/hi
+```
+
+### 5. Run the Server
+```bash
+python -m backend.main
+```
+
+The server will start at `http://localhost:8000`.
 
 ---
 
-## ⚠️ Known Limitations
+## API Endpoints
 
-- Handwritten accuracy depends heavily on image quality / scan resolution
-- TrOCR model downloads ~1.3 GB on first use
-- Poppler is required for PDF support (Windows: manual PATH setup)
-- LLM correction requires Ollama running locally
-- TextBlob spellcheck is capped at 150 words per call for performance
+### POST `/predict-image`
+Detect emotion from a face image.
+
+**Input:** `multipart/form-data` with `file` field (JPG, PNG, BMP, WebP)
+
+**Response:**
+```json
+{
+  "status": "success",
+  "data": {
+    "emotion": "Happy",
+    "confidence": 0.9823,
+    "all_emotions": {
+      "Happy": 0.9823,
+      "Sad": 0.0012,
+      "Angry": 0.0034,
+      "Surprise": 0.0056,
+      "Neutral": 0.0045,
+      "Fear": 0.0018,
+      "Disgust": 0.0012
+    },
+    "bounding_box": {"x": 120, "y": 80, "width": 200, "height": 200},
+    "faces_detected": 1
+  }
+}
+```
+
+### POST `/predict-voice`
+Detect emotion from voice audio.
+
+**Input:** `multipart/form-data` with `file` (WAV, mono, 16-bit PCM) and `language` field
+
+**Supported languages:** `en`, `hi`, `mr`, `ta`, `te`
+
+**Response:**
+```json
+{
+  "status": "success",
+  "data": {
+    "text": "I am feeling very happy today",
+    "emotion": "Happy",
+    "sentiment_label": "positive",
+    "sentiment_score": 0.9234,
+    "language": "English"
+  }
+}
+```
+
+### POST `/generate-quote`
+Generate a motivational quote based on emotion.
+
+**Input:** `application/json`
+```json
+{
+  "emotion": "Happy"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "data": {
+    "emotion": "Happy",
+    "quote": "Happiness is not something ready-made. It comes from your own actions.",
+    "source": "fallback"
+  }
+}
+```
+
+### GET `/supported-languages`
+List supported languages for voice analysis.
+
+### GET `/health`
+Health check endpoint.
 
 ---
 
-## 🚀 Planned Improvements
+## Testing
 
-- [ ] Table extraction (OpenCV grid detection)
-- [ ] `.docx` structured export
-- [ ] Multi-language OCR (Hindi, Arabic, etc.)
-- [ ] Batch file processing
-- [ ] Cloud deployment (Render / Railway / AWS)
-- [ ] Word-level bounding box + per-word confidence
+### Using the UI
+Open `http://localhost:8000` in your browser to access the testing UI.
+
+### Using curl
+
+**Test image emotion:**
+```bash
+curl -X POST http://localhost:8000/predict-image \
+  -F "file=@test_image.jpg"
+```
+
+**Test voice emotion:**
+```bash
+curl -X POST http://localhost:8000/predict-voice \
+  -F "file=@test_audio.wav" \
+  -F "language=en"
+```
+
+**Test quote generation:**
+```bash
+curl -X POST http://localhost:8000/generate-quote \
+  -H "Content-Type: application/json" \
+  -d '{"emotion": "Happy"}'
+```
+
+**Health check:**
+```bash
+curl http://localhost:8000/health
+```
 
 ---
 
-## 👨‍💻 Author
+## Environment Requirements
 
-**Manorath Rastogi**
-
+| Requirement | Value |
+|-------------|-------|
+| Python | 3.10+ |
+| OS | Windows / Linux |
+| RAM | 8GB minimum |
+| GPU | Optional (recommended for faster inference) |
 
 ---
 
-⭐ **If this project helped you, give it a star!**
+## Constraints
+
+- No paid APIs used
+- Works fully offline (after model download)
+- Supports multilingual voice input
+- Minimal dependencies for core functionality
+
+---
+
+## License
+
+MIT
