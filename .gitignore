@@ -19,3 +19,14 @@ temp/
 .DS_Store
 Thumbs.db
 node_modules/
+
+# Vosk models (large files, download separately)
+backend/models/vosk_model/*/
+!backend/models/.gitkeep
+
+# ML model files
+*.h5
+*.pb
+*.onnx
+*.pt
+*.pth
