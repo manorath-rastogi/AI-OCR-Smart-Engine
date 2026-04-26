@@ -3,8 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced OCR System</title>
+    <title>Emotion AI - Testing UI</title>
     <style>
+        :root {
+            --bg-primary: #0f0f23;
+            --bg-secondary: #1a1a3e;
+            --bg-card: #252550;
+            --text-primary: #e0e0ff;
+            --text-secondary: #a0a0d0;
+            --accent-blue: #6c63ff;
+            --accent-pink: #ff6b9d;
+            --accent-green: #4ecdc4;
+            --accent-orange: #ff9f43;
+            --border: #3a3a6e;
+            --shadow: rgba(0, 0, 0, 0.4);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,109 +27,178 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0f0f23;
-            color: #e0e0e0;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
         }
 
-        .container {
-            max-width: 960px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        header {
+        .header {
             text-align: center;
-            margin-bottom: 40px;
+            padding: 2rem 1rem;
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
+            border-bottom: 1px solid var(--border);
         }
 
-        header h1 {
-            font-size: 2.2rem;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-pink));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 8px;
+            margin-bottom: 0.5rem;
         }
 
-        header p {
-            color: #888;
-            font-size: 0.95rem;
-        }
-
-        .upload-section {
-            background: #1a1a2e;
-            border: 2px dashed #333;
-            border-radius: 16px;
-            padding: 50px 30px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .upload-section:hover,
-        .upload-section.dragover {
-            border-color: #667eea;
-            background: #1e1e3a;
-        }
-
-        .upload-section svg {
-            width: 48px;
-            height: 48px;
-            margin-bottom: 16px;
-            color: #667eea;
-        }
-
-        .upload-section h3 {
+        .header p {
+            color: var(--text-secondary);
             font-size: 1.1rem;
-            margin-bottom: 8px;
         }
 
-        .upload-section p {
-            color: #666;
-            font-size: 0.85rem;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
         }
 
-        #file-input {
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 0.8rem 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        .tab-content {
             display: none;
         }
 
-        .controls {
-            display: flex;
-            gap: 12px;
-            margin-top: 24px;
-            flex-wrap: wrap;
-            justify-content: center;
+        .tab-content.active {
+            display: block;
         }
 
-        .controls select,
-        .controls button {
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: 1px solid #333;
-            background: #1a1a2e;
-            color: #e0e0e0;
-            font-size: 0.9rem;
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+
+        .card h2 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: var(--accent-blue);
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
         }
 
-        .controls select:hover,
-        .controls button:hover {
-            border-color: #667eea;
+        .upload-area:hover {
+            border-color: var(--accent-blue);
+            background: rgba(108, 99, 255, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--accent-green);
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .upload-area svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1rem;
+            fill: var(--text-secondary);
+        }
+
+        .upload-area p {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-area .file-name {
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        select:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2) !important;
-            border: none !important;
-            font-weight: 600;
-            min-width: 160px;
+            background: linear-gradient(135deg, var(--accent-blue), #5a52e0);
+            color: white;
         }
 
         .btn-primary:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.4);
         }
 
         .btn-primary:disabled {
@@ -124,421 +207,667 @@
             transform: none;
         }
 
-        .btn-download {
-            background: #1a3a1a !important;
-            border-color: #2a6a2a !important;
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
         }
 
-        .btn-download:hover {
-            background: #2a4a2a !important;
-        }
-
-        .file-info {
+        .result-area {
+            margin-top: 1.5rem;
             display: none;
-            margin-top: 16px;
-            padding: 12px 20px;
-            background: #16213e;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            color: #aaa;
         }
 
-        .file-info.show {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .result-area.visible {
+            display: block;
         }
 
-        .file-info .remove-btn {
-            color: #e74c3c;
-            cursor: pointer;
-            font-size: 0.85rem;
-            border: none;
-            background: none;
+        .result-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            position: relative;
         }
 
-        .progress-bar {
-            display: none;
-            margin-top: 20px;
-            height: 4px;
-            background: #1a1a2e;
+        .emotion-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .emotion-happy { background: rgba(255, 215, 0, 0.2); color: #ffd700; }
+        .emotion-sad { background: rgba(70, 130, 180, 0.2); color: #4682b4; }
+        .emotion-angry { background: rgba(255, 69, 0, 0.2); color: #ff4500; }
+        .emotion-surprise { background: rgba(255, 165, 0, 0.2); color: #ffa500; }
+        .emotion-neutral { background: rgba(169, 169, 169, 0.2); color: #a9a9a9; }
+        .emotion-fear { background: rgba(148, 0, 211, 0.2); color: #9400d3; }
+        .emotion-disgust { background: rgba(0, 128, 0, 0.2); color: #00a000; }
+        .emotion-unknown { background: rgba(128, 128, 128, 0.2); color: #888; }
+
+        .confidence-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-primary);
             border-radius: 4px;
             overflow: hidden;
+            margin: 0.5rem 0;
         }
 
-        .progress-bar.show {
-            display: block;
-        }
-
-        .progress-bar .fill {
+        .confidence-fill {
             height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
             border-radius: 4px;
-            animation: progress 2s ease-in-out infinite;
+            transition: width 0.5s ease;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
         }
 
-        @keyframes progress {
-            0% { width: 0%; }
-            50% { width: 80%; }
-            100% { width: 100%; }
+        .emotions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
         }
 
-        .status-msg {
-            text-align: center;
-            margin-top: 12px;
-            font-size: 0.9rem;
-            color: #888;
-            display: none;
-        }
-
-        .status-msg.show {
-            display: block;
-        }
-
-        .result-section {
-            display: none;
-            margin-top: 32px;
-        }
-
-        .result-section.show {
-            display: block;
-        }
-
-        .result-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .result-header h2 {
-            font-size: 1.3rem;
-            color: #667eea;
-        }
-
-        .result-meta {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-
-        .meta-badge {
-            padding: 4px 12px;
-            background: #16213e;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: #8899aa;
-        }
-
-        .meta-badge.engine {
-            background: #1a2a4a;
-            color: #667eea;
-        }
-
-        .meta-badge.handwritten {
-            background: #3a1a2a;
-            color: #ea6688;
-        }
-
-        .result-text {
-            background: #1a1a2e;
-            border: 1px solid #2a2a4e;
-            border-radius: 12px;
-            padding: 24px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            line-height: 1.7;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            max-height: 500px;
-            overflow-y: auto;
-            color: #d0d0d0;
-        }
-
-        .result-text::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .result-text::-webkit-scrollbar-track {
-            background: #1a1a2e;
-        }
-
-        .result-text::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 3px;
-        }
-
-        .error-msg {
-            display: none;
-            margin-top: 16px;
-            padding: 16px;
-            background: #2a1a1a;
-            border: 1px solid #4a2a2a;
+        .emotion-item {
+            background: var(--bg-primary);
             border-radius: 8px;
-            color: #e74c3c;
-            font-size: 0.9rem;
+            padding: 0.5rem;
+            text-align: center;
+            font-size: 0.85rem;
         }
 
-        .error-msg.show {
-            display: block;
+        .emotion-item .label {
+            color: var(--text-secondary);
         }
 
-        .preview-section {
-            display: none;
-            margin-top: 20px;
+        .emotion-item .value {
+            font-weight: bold;
+            color: var(--accent-blue);
+        }
+
+        .quote-box {
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.1), rgba(255, 107, 157, 0.1));
+            border: 1px solid var(--accent-blue);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            font-style: italic;
+            font-size: 1.1rem;
+            line-height: 1.6;
             text-align: center;
         }
 
-        .preview-section.show {
+        .quote-emotion-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .emotion-chip {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .emotion-chip:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        .emotion-chip.selected {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading.visible {
             display: block;
         }
 
-        .preview-section img {
-            max-width: 100%;
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border);
+            border-top-color: var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: rgba(255, 69, 0, 0.1);
+            border: 1px solid rgba(255, 69, 0, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            color: #ff6347;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .error-message.visible {
+            display: block;
+        }
+
+        .preview-image {
+            max-width: 300px;
             max-height: 300px;
             border-radius: 8px;
-            border: 1px solid #333;
+            margin: 1rem auto;
+            display: block;
+        }
+
+        .text-result {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            font-family: monospace;
+            font-size: 0.95rem;
+            word-wrap: break-word;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-healthy {
+            background: rgba(78, 205, 196, 0.2);
+            color: var(--accent-green);
+        }
+
+        .status-error {
+            background: rgba(255, 69, 0, 0.2);
+            color: #ff6347;
+        }
+
+        .health-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
         }
 
         footer {
             text-align: center;
-            margin-top: 60px;
-            color: #444;
-            font-size: 0.8rem;
+            padding: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
         }
 
-        @media (max-width: 600px) {
-            .container { padding: 20px 12px; }
-            header h1 { font-size: 1.6rem; }
-            .upload-section { padding: 30px 16px; }
-            .controls { flex-direction: column; }
-            .controls select, .controls button { width: 100%; }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8rem; }
+            .card { padding: 1.2rem; }
+            .upload-area { padding: 2rem 1rem; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Advanced OCR System</h1>
-            <p>PaddleOCR + TrOCR + Tesseract | Handwritten & Printed Text | Multilingual</p>
-        </header>
 
-        <div class="upload-section" id="upload-area">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-            </svg>
-            <h3>Upload Image or PDF</h3>
-            <p>Drag & drop or click to select | PNG, JPEG, BMP, TIFF, WebP, PDF</p>
-            <input type="file" id="file-input" accept="image/*,.pdf">
-        </div>
+<div class="header">
+    <h1>Emotion AI</h1>
+    <p>AI-Powered Emotion Detection System</p>
+    <div class="health-bar" id="healthBar" style="display:inline-flex; margin-top:1rem;">
+        <span>API Status:</span>
+        <span class="status-badge" id="healthStatus">Checking...</span>
+    </div>
+</div>
 
-        <div class="file-info" id="file-info">
-            <span id="file-name"></span>
-            <button class="remove-btn" onclick="removeFile()">Remove</button>
-        </div>
-
-        <div class="preview-section" id="preview-section">
-            <img id="preview-img" alt="Preview">
-        </div>
-
-        <div class="controls">
-            <select id="engine-select">
-                <option value="smart">Smart Routing (Auto)</option>
-                <option value="paddle">PaddleOCR Only</option>
-                <option value="trocr">TrOCR Only (Handwritten)</option>
-                <option value="tesseract">Tesseract Only (Printed)</option>
-            </select>
-            <button class="btn-primary" id="ocr-btn" onclick="runOCR()" disabled>Extract Text</button>
-            <button class="btn-download controls-btn" id="download-btn" onclick="downloadText()" style="display:none;">
-                Download .txt
-            </button>
-        </div>
-
-        <div class="progress-bar" id="progress-bar">
-            <div class="fill"></div>
-        </div>
-
-        <div class="status-msg" id="status-msg"></div>
-        <div class="error-msg" id="error-msg"></div>
-
-        <div class="result-section" id="result-section">
-            <div class="result-header">
-                <h2>Extracted Text</h2>
-            </div>
-            <div class="result-meta" id="result-meta"></div>
-            <div class="result-text" id="result-text"></div>
-        </div>
-
-        <footer>
-            <p>Advanced OCR System v1.0 | PaddleOCR + TrOCR + Tesseract</p>
-        </footer>
+<div class="container">
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('image')">Image Emotion</button>
+        <button class="tab-btn" onclick="switchTab('voice')">Voice Emotion</button>
+        <button class="tab-btn" onclick="switchTab('quote')">Quote Generator</button>
     </div>
 
-    <script>
-        let selectedFile = null;
-        let extractedText = '';
+    <!-- Image Emotion Tab -->
+    <div class="tab-content active" id="tab-image">
+        <div class="card">
+            <h2>Image-Based Emotion Detection</h2>
+            <p style="color:var(--text-secondary); margin-bottom:1rem;">
+                Upload an image with a face to detect emotions using AI.
+            </p>
 
-        // Drag & drop
-        const uploadArea = document.getElementById('upload-area');
-        const fileInput = document.getElementById('file-input');
+            <div class="upload-area" id="imageUploadArea" onclick="document.getElementById('imageInput').click()">
+                <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                <p>Click or drag & drop an image here</p>
+                <p style="font-size:0.85rem;">Supports: JPG, JPEG, PNG, BMP, WebP (max 10MB)</p>
+                <p class="file-name" id="imageFileName"></p>
+            </div>
+            <input type="file" id="imageInput" accept=".jpg,.jpeg,.png,.bmp,.webp" onchange="handleImageSelect(this)">
 
-        uploadArea.addEventListener('click', () => fileInput.click());
+            <img id="imagePreview" class="preview-image" style="display:none;" alt="Preview">
 
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
-        });
+            <button class="btn btn-primary" id="imageSubmitBtn" onclick="predictImage()" disabled>
+                Detect Emotion
+            </button>
 
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
-        });
+            <div class="loading" id="imageLoading">
+                <div class="spinner"></div>
+                <p>Analyzing image...</p>
+            </div>
 
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            if (e.dataTransfer.files.length > 0) {
-                handleFile(e.dataTransfer.files[0]);
-            }
-        });
+            <div class="error-message" id="imageError"></div>
 
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                handleFile(e.target.files[0]);
-            }
-        });
+            <div class="result-area" id="imageResult">
+                <div class="result-box">
+                    <h3 style="margin-bottom:0.5rem;">Detection Result</h3>
+                    <span class="emotion-badge" id="imageEmotionBadge"></span>
+                    <p>Confidence: <strong id="imageConfidence"></strong></p>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="imageConfBar"></div>
+                    </div>
+                    <p style="color:var(--text-secondary); font-size:0.9rem;" id="imageFaces"></p>
+                    <div class="emotions-grid" id="imageEmotionsGrid"></div>
 
-        function handleFile(file) {
-            selectedFile = file;
-            document.getElementById('file-name').textContent =
-                `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
-            document.getElementById('file-info').classList.add('show');
-            document.getElementById('ocr-btn').disabled = false;
-            hideError();
+                    <div style="margin-top:1rem;">
+                        <button class="btn btn-secondary" onclick="getQuoteFromImage()">
+                            Get Quote for This Emotion
+                        </button>
+                        <div class="quote-box" id="imageQuoteBox" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            // Show image preview
-            const previewSection = document.getElementById('preview-section');
-            if (file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    document.getElementById('preview-img').src = e.target.result;
-                    previewSection.classList.add('show');
-                };
-                reader.readAsDataURL(file);
-            } else {
-                previewSection.classList.remove('show');
-            }
+    <!-- Voice Emotion Tab -->
+    <div class="tab-content" id="tab-voice">
+        <div class="card">
+            <h2>Voice-Based Emotion Detection</h2>
+            <p style="color:var(--text-secondary); margin-bottom:1rem;">
+                Upload a WAV audio file for speech recognition and emotion analysis.
+            </p>
+
+            <div class="form-group">
+                <label for="languageSelect">Language</label>
+                <select id="languageSelect">
+                    <option value="en">English</option>
+                    <option value="hi">Hindi</option>
+                    <option value="mr">Marathi</option>
+                    <option value="ta">Tamil</option>
+                    <option value="te">Telugu</option>
+                </select>
+            </div>
+
+            <div class="upload-area" id="voiceUploadArea" onclick="document.getElementById('voiceInput').click()">
+                <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                <p>Click or drag & drop a WAV file here</p>
+                <p style="font-size:0.85rem;">Supports: WAV (mono, 16-bit PCM, max 10MB)</p>
+                <p class="file-name" id="voiceFileName"></p>
+            </div>
+            <input type="file" id="voiceInput" accept=".wav" onchange="handleVoiceSelect(this)">
+
+            <button class="btn btn-primary" id="voiceSubmitBtn" onclick="predictVoice()" disabled>
+                Analyze Voice
+            </button>
+
+            <div class="loading" id="voiceLoading">
+                <div class="spinner"></div>
+                <p>Processing audio... This may take a moment.</p>
+            </div>
+
+            <div class="error-message" id="voiceError"></div>
+
+            <div class="result-area" id="voiceResult">
+                <div class="result-box">
+                    <h3 style="margin-bottom:0.5rem;">Voice Analysis Result</h3>
+                    <span class="emotion-badge" id="voiceEmotionBadge"></span>
+
+                    <div style="margin:1rem 0;">
+                        <p style="color:var(--text-secondary);">Transcribed Text:</p>
+                        <div class="text-result" id="voiceText"></div>
+                    </div>
+
+                    <p>Sentiment: <strong id="voiceSentiment"></strong></p>
+                    <p>Confidence: <strong id="voiceConfidence"></strong></p>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="voiceConfBar"></div>
+                    </div>
+                    <p style="color:var(--text-secondary); font-size:0.9rem;" id="voiceLanguage"></p>
+
+                    <div style="margin-top:1rem;">
+                        <button class="btn btn-secondary" onclick="getQuoteFromVoice()">
+                            Get Quote for This Emotion
+                        </button>
+                        <div class="quote-box" id="voiceQuoteBox" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quote Generator Tab -->
+    <div class="tab-content" id="tab-quote">
+        <div class="card">
+            <h2>Motivational Quote Generator</h2>
+            <p style="color:var(--text-secondary); margin-bottom:1rem;">
+                Select an emotion to generate a contextual motivational quote.
+            </p>
+
+            <div class="quote-emotion-selector" id="quoteEmotionSelector">
+                <span class="emotion-chip" onclick="selectQuoteEmotion(this, 'Happy')">Happy</span>
+                <span class="emotion-chip" onclick="selectQuoteEmotion(this, 'Sad')">Sad</span>
+                <span class="emotion-chip" onclick="selectQuoteEmotion(this, 'Angry')">Angry</span>
+                <span class="emotion-chip" onclick="selectQuoteEmotion(this, 'Surprise')">Surprise</span>
+                <span class="emotion-chip" onclick="selectQuoteEmotion(this, 'Neutral')">Neutral</span>
+                <span class="emotion-chip" onclick="selectQuoteEmotion(this, 'Fear')">Fear</span>
+                <span class="emotion-chip" onclick="selectQuoteEmotion(this, 'Disgust')">Disgust</span>
+            </div>
+
+            <button class="btn btn-primary" id="quoteSubmitBtn" onclick="generateQuote()" disabled>
+                Generate Quote
+            </button>
+
+            <div class="loading" id="quoteLoading">
+                <div class="spinner"></div>
+                <p>Generating quote...</p>
+            </div>
+
+            <div class="error-message" id="quoteError"></div>
+
+            <div class="result-area" id="quoteResult">
+                <div class="result-box">
+                    <span class="emotion-badge" id="quoteEmotionBadge"></span>
+                    <div class="quote-box" id="quoteText"></div>
+                    <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:0.5rem; text-align:center;" id="quoteSource"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>Emotion AI v1.0.0 &mdash; Powered by OpenCV, FER, Vosk, HuggingFace Transformers</p>
+</footer>
+
+<script>
+const API_BASE = window.location.origin;
+let selectedImageFile = null;
+let selectedVoiceFile = null;
+let selectedQuoteEmotion = null;
+let lastImageEmotion = null;
+let lastVoiceEmotion = null;
+
+// Health check
+async function checkHealth() {
+    const el = document.getElementById('healthStatus');
+    try {
+        const res = await fetch(`${API_BASE}/health`);
+        if (res.ok) {
+            el.textContent = 'Healthy';
+            el.className = 'status-badge status-healthy';
+        } else {
+            el.textContent = 'Error';
+            el.className = 'status-badge status-error';
         }
+    } catch {
+        el.textContent = 'Offline';
+        el.className = 'status-badge status-error';
+    }
+}
+checkHealth();
+setInterval(checkHealth, 30000);
 
-        function removeFile() {
-            selectedFile = null;
-            fileInput.value = '';
-            document.getElementById('file-info').classList.remove('show');
-            document.getElementById('preview-section').classList.remove('show');
-            document.getElementById('ocr-btn').disabled = true;
-            document.getElementById('result-section').classList.remove('show');
-            document.getElementById('download-btn').style.display = 'none';
-            hideError();
-        }
+// Tab switching
+function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById(`tab-${tab}`).classList.add('active');
+}
 
-        async function runOCR() {
-            if (!selectedFile) return;
+// Drag & drop
+function setupDragDrop(areaId, inputId) {
+    const area = document.getElementById(areaId);
+    area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('dragover'); });
+    area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+    area.addEventListener('drop', e => {
+        e.preventDefault();
+        area.classList.remove('dragover');
+        const input = document.getElementById(inputId);
+        input.files = e.dataTransfer.files;
+        input.dispatchEvent(new Event('change'));
+    });
+}
+setupDragDrop('imageUploadArea', 'imageInput');
+setupDragDrop('voiceUploadArea', 'voiceInput');
 
-            const btn = document.getElementById('ocr-btn');
-            const progressBar = document.getElementById('progress-bar');
-            const statusMsg = document.getElementById('status-msg');
-            const engine = document.getElementById('engine-select').value;
+// Image handling
+function handleImageSelect(input) {
+    const file = input.files[0];
+    if (!file) return;
+    selectedImageFile = file;
+    document.getElementById('imageFileName').textContent = file.name;
+    document.getElementById('imageSubmitBtn').disabled = false;
 
-            btn.disabled = true;
-            btn.textContent = 'Processing...';
-            progressBar.classList.add('show');
-            statusMsg.textContent = 'Uploading and processing... This may take a moment.';
-            statusMsg.classList.add('show');
-            hideError();
-            document.getElementById('result-section').classList.remove('show');
-            document.getElementById('download-btn').style.display = 'none';
+    const reader = new FileReader();
+    reader.onload = e => {
+        const preview = document.getElementById('imagePreview');
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+}
 
-            const formData = new FormData();
-            formData.append('file', selectedFile);
+async function predictImage() {
+    if (!selectedImageFile) return;
 
-            try {
-                const url = `/ocr?engine=${engine}&smart_routing=${engine === 'smart'}`;
-                const response = await fetch(url, {
-                    method: 'POST',
-                    body: formData,
-                });
+    showLoading('image');
+    hideError('image');
+    hideResult('image');
 
-                if (!response.ok) {
-                    const errData = await response.json().catch(() => ({}));
-                    throw new Error(errData.detail || `Server error: ${response.status}`);
-                }
+    const formData = new FormData();
+    formData.append('file', selectedImageFile);
 
-                const data = await response.json();
-                displayResult(data);
-            } catch (error) {
-                showError(error.message);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Extract Text';
-                progressBar.classList.remove('show');
-                statusMsg.classList.remove('show');
-            }
-        }
+    try {
+        const res = await fetch(`${API_BASE}/predict-image`, { method: 'POST', body: formData });
+        const data = await res.json();
 
-        function displayResult(data) {
-            const resultSection = document.getElementById('result-section');
-            const resultText = document.getElementById('result-text');
-            const resultMeta = document.getElementById('result-meta');
+        if (!res.ok) throw new Error(data.detail || 'Prediction failed');
 
-            const result = data.result || {};
-            extractedText = result.text || 'No text detected.';
+        const result = data.data;
+        lastImageEmotion = result.emotion;
 
-            resultText.textContent = extractedText;
+        const badge = document.getElementById('imageEmotionBadge');
+        badge.textContent = result.emotion;
+        badge.className = `emotion-badge emotion-${result.emotion.toLowerCase()}`;
 
-            // Meta badges
-            let metaHTML = '';
-            metaHTML += `<span class="meta-badge">${data.file_type?.toUpperCase() || 'IMAGE'}</span>`;
-            if (data.pages) {
-                metaHTML += `<span class="meta-badge">${data.pages} page(s)</span>`;
-            }
+        const conf = (result.confidence * 100).toFixed(1);
+        document.getElementById('imageConfidence').textContent = `${conf}%`;
+        document.getElementById('imageConfBar').style.width = `${conf}%`;
+        document.getElementById('imageFaces').textContent = `Faces detected: ${result.faces_detected}`;
 
-            const engines = result.engines_used || [result.engine || 'PaddleOCR'];
-            engines.forEach(eng => {
-                metaHTML += `<span class="meta-badge engine">${eng}</span>`;
+        const grid = document.getElementById('imageEmotionsGrid');
+        grid.innerHTML = '';
+        if (result.all_emotions) {
+            Object.entries(result.all_emotions).forEach(([emotion, score]) => {
+                grid.innerHTML += `
+                    <div class="emotion-item">
+                        <div class="label">${emotion}</div>
+                        <div class="value">${(score * 100).toFixed(1)}%</div>
+                    </div>`;
             });
-
-            if (result.handwritten_detected) {
-                metaHTML += `<span class="meta-badge handwritten">Handwritten Detected</span>`;
-            }
-
-            resultMeta.innerHTML = metaHTML;
-            resultSection.classList.add('show');
-            document.getElementById('download-btn').style.display = 'inline-block';
         }
 
-        function downloadText() {
-            if (!extractedText) return;
-            const blob = new Blob([extractedText], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'ocr_output.txt';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
+        document.getElementById('imageQuoteBox').style.display = 'none';
+        showResult('image');
+    } catch (err) {
+        showError('image', err.message);
+    } finally {
+        hideLoading('image');
+    }
+}
 
-        function showError(message) {
-            const el = document.getElementById('error-msg');
-            el.textContent = message;
-            el.classList.add('show');
-        }
+async function getQuoteFromImage() {
+    if (!lastImageEmotion) return;
+    const box = document.getElementById('imageQuoteBox');
+    box.style.display = 'block';
+    box.textContent = 'Generating quote...';
+    try {
+        const res = await fetch(`${API_BASE}/generate-quote`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ emotion: lastImageEmotion })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail);
+        box.textContent = `"${data.data.quote}"`;
+    } catch (err) {
+        box.textContent = `Error: ${err.message}`;
+    }
+}
 
-        function hideError() {
-            document.getElementById('error-msg').classList.remove('show');
-        }
-    </script>
+// Voice handling
+function handleVoiceSelect(input) {
+    const file = input.files[0];
+    if (!file) return;
+    selectedVoiceFile = file;
+    document.getElementById('voiceFileName').textContent = file.name;
+    document.getElementById('voiceSubmitBtn').disabled = false;
+}
+
+async function predictVoice() {
+    if (!selectedVoiceFile) return;
+
+    showLoading('voice');
+    hideError('voice');
+    hideResult('voice');
+
+    const formData = new FormData();
+    formData.append('file', selectedVoiceFile);
+    formData.append('language', document.getElementById('languageSelect').value);
+
+    try {
+        const res = await fetch(`${API_BASE}/predict-voice`, { method: 'POST', body: formData });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.detail || 'Voice analysis failed');
+
+        const result = data.data;
+        lastVoiceEmotion = result.emotion;
+
+        const badge = document.getElementById('voiceEmotionBadge');
+        badge.textContent = result.emotion;
+        badge.className = `emotion-badge emotion-${result.emotion.toLowerCase()}`;
+
+        document.getElementById('voiceText').textContent = result.text || '(No speech detected)';
+        document.getElementById('voiceSentiment').textContent = result.sentiment_label;
+
+        const conf = (result.sentiment_score * 100).toFixed(1);
+        document.getElementById('voiceConfidence').textContent = `${conf}%`;
+        document.getElementById('voiceConfBar').style.width = `${conf}%`;
+        document.getElementById('voiceLanguage').textContent = `Language: ${result.language}`;
+
+        document.getElementById('voiceQuoteBox').style.display = 'none';
+        showResult('voice');
+    } catch (err) {
+        showError('voice', err.message);
+    } finally {
+        hideLoading('voice');
+    }
+}
+
+async function getQuoteFromVoice() {
+    if (!lastVoiceEmotion) return;
+    const box = document.getElementById('voiceQuoteBox');
+    box.style.display = 'block';
+    box.textContent = 'Generating quote...';
+    try {
+        const res = await fetch(`${API_BASE}/generate-quote`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ emotion: lastVoiceEmotion })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail);
+        box.textContent = `"${data.data.quote}"`;
+    } catch (err) {
+        box.textContent = `Error: ${err.message}`;
+    }
+}
+
+// Quote handling
+function selectQuoteEmotion(chip, emotion) {
+    document.querySelectorAll('.emotion-chip').forEach(c => c.classList.remove('selected'));
+    chip.classList.add('selected');
+    selectedQuoteEmotion = emotion;
+    document.getElementById('quoteSubmitBtn').disabled = false;
+}
+
+async function generateQuote() {
+    if (!selectedQuoteEmotion) return;
+
+    showLoading('quote');
+    hideError('quote');
+    hideResult('quote');
+
+    try {
+        const res = await fetch(`${API_BASE}/generate-quote`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ emotion: selectedQuoteEmotion })
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.detail || 'Quote generation failed');
+
+        const result = data.data;
+        const badge = document.getElementById('quoteEmotionBadge');
+        badge.textContent = result.emotion;
+        badge.className = `emotion-badge emotion-${result.emotion.toLowerCase()}`;
+
+        document.getElementById('quoteText').textContent = `"${result.quote}"`;
+        document.getElementById('quoteSource').textContent =
+            result.source === 'generated' ? 'Generated by AI (distilgpt2)' : 'Curated quote';
+
+        showResult('quote');
+    } catch (err) {
+        showError('quote', err.message);
+    } finally {
+        hideLoading('quote');
+    }
+}
+
+// UI helpers
+function showLoading(section) { document.getElementById(`${section}Loading`).classList.add('visible'); }
+function hideLoading(section) { document.getElementById(`${section}Loading`).classList.remove('visible'); }
+function showResult(section) { document.getElementById(`${section}Result`).classList.add('visible'); }
+function hideResult(section) { document.getElementById(`${section}Result`).classList.remove('visible'); }
+function showError(section, msg) {
+    const el = document.getElementById(`${section}Error`);
+    el.textContent = msg;
+    el.classList.add('visible');
+}
+function hideError(section) { document.getElementById(`${section}Error`).classList.remove('visible'); }
+</script>
+
 </body>
 </html>
